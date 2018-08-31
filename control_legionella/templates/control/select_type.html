@@ -1,0 +1,37 @@
+{% extends "control/base.html" %}
+
+{% block title %}area{%endblock%}
+
+{% block content %}
+
+
+<div class="card bg-light">
+	<h5 class="card-header text-center">Selecciona fred o calent pel punt: "{{ measure_point }}"</a></h5>
+	<div class="card-body">
+		<form method="GET" id="form">
+			<input name="measure_point" value="{{measure_point.number}}" class="d-none">
+			{{form.as_p}}
+			{% for x,y in form.fields.type_measure.choices %}
+			<button type="button" class="btn {% if y == 'freda' %}btn-primary{% elif y == 'calenta' %}btn-danger{% endif %} d-block mt-2 button_type" value="{{x}}">{{y}}</button>
+			{% endfor %}
+		</form>
+	</div>
+		
+</div>
+
+
+{% endblock %}
+{% block js %}
+<script>
+$(document).ready(function(){
+	let form_type = $('#form');
+	$('.button_type').click(function(){
+		let button_value = $(this).attr('value');
+		$('select').val(button_value);
+		form_type.submit();
+	})
+})
+
+
+</script>
+{% endblock %}	

@@ -1,0 +1,24 @@
+.my-handle {
+	cursor: move;
+	cursor: -webkit-grabbing;
+}
+
+/*.sortable-chosen {
+	background-color: red;
+}*/
+
+.js-edit, .js-delete {
+	cursor: pointer;
+}
+
+.sortable-ghost {
+  opacity: .3;
+  background: #C8EBFB;
+}
+
+.table_head {
+	background: #8c8cd9;
+	color: white;
+
+}
+

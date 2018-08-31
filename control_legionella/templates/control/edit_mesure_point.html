@@ -1,0 +1,110 @@
+{% extends "control/base.html" %}
+
+{% block title %}punt mesura{%endblock%}
+
+{% block content %}
+
+
+<div class="row mt-2">
+	<div class="col">
+		<h4>Editar els punts de mesura i el seu ordre</h4>
+
+<div class="row mb-5 mt-2">
+	<div class="col col-6">
+		<ul id="simpleList" class="list-group bg-light p-3" data-d = "{% url 'set_point_order' %}">
+{% for a in area_all %}
+	{% if forloop.first %}
+			<li  class="d-none" data-id="area|{{a.id}}"></li>
+			<h4 class="mt-2"> {{a}}:</h4>
+	{% else %}
+			<li class="list-group-item border-0 mt-2 p-0" style="list-style: none; background: none;" data-id="area|{{a.id}}">
+				<h4> {{a}}:</h4>
+			</li>
+	{% endif %}
+			
+	{% for j in a.measure_point_set.all %}
+					
+			<li class="list-group-item my-handle" data-id="point|{{j.id}}">
+				<span class="area"><span class="font-weight-bold">{{j.number}}</span>- {{j}}</span>
+				<a href="{% url 'edit_point2' %}?point={{j.pk}}"> <span class="badge badge-warning badge-pill float-right ml-3 js-edit">editar</span>
+				</span> </a>
+			</li>
+
+	{% endfor %}
+{% endfor %}
+
+		</ul>
+	</div>
+	<div class="col col-6" style="position:fixed; right: 0;">
+		
+		<ul id="simpleList3" class="list-group bg-light p-3">
+			<li  class="d-none" data-id="area|None"></li>
+			<h4> Punts de mesura sensa zona asignada </h4>
+{% for j in measure_point_orphan %}
+
+		<li class="list-group-item my-handle" data-id="point|{{j.id}}">
+			<span class="area"><span class="font-weight-bold">{{j.number}}</span>- {{j}}</span>
+			<a href="{% url 'edit_point2' %}?point={{j.pk}}"> <span class="badge badge-warning badge-pill float-right ml-3 js-edit">editar</span>
+			</span> </a>
+		</li>
+
+{% endfor %}
+			
+		</ul>
+	</div>
+</div>
+
+
+{% endblock content %}
+
+{% block js %}
+
+{% include 'snippets/ajax.html' %}
+ 
+<script>
+
+	
+    // Simple list
+    let list = Sortable.create(simpleList, {
+		group: "point_mesure",
+		animation: 150,
+		handle: ".my-handle",
+		onEnd: function () {
+			send_order();
+		},
+		
+	});
+
+	let list3 = Sortable.create(simpleList3, {
+		group: "point_mesure",
+		animation: 150,
+		handle: ".my-handle",
+		onEnd: function () {
+			send_order();
+		},
+		
+	});
+
+
+	// Send order
+
+	function send_order(){
+		let sort3 = list3.toArray();
+		let sort = list.toArray();
+		let points_array = sort3.concat(sort);
+		console.log(points_array);
+		$.ajax({
+            method: "POST",
+            url: $('#simpleList').data('d'),
+            data: {'points_array':points_array.toString()},
+            success: function(data, textStatus, jqXHR){
+            	console.log(data['data'])
+            },
+        });
+
+	}
+
+	
+</script>
+
+{% endblock %}

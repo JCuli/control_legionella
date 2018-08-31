@@ -1,0 +1,21 @@
+{% extends "control/base.html" %}
+
+{% block title %}home{%endblock%}
+
+{% block content %}
+
+
+<div class="row ">
+	<div class="col">
+		{% for j in measure_point_query %}
+			<h5 class="d-block mt-2"> Punt: {{j}} ({{j.area}})</h5>
+			{% for i in measure_query %}
+				{% if i.measure_point == j %}
+					<div class="ml-2">- {{i.date_created}}, temp.:{{i.temperature}} ({{i.type_measure}})</div>
+				{% endif %}
+			{% endfor %}
+		{% endfor %}	
+	</div>
+</div>
+
+{% endblock %}

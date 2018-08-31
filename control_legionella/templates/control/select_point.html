@@ -1,0 +1,56 @@
+{% extends "control/base.html" %}
+
+{% block title %}point{%endblock%}
+
+{% block content %}
+
+<div class="row mt-2">
+	<div class="col col-12 col-md-8">	
+		<h4>Selecciona un punt de mesura per numero</h4>
+		<div class="border p-2 clearfix">
+			<form method='GET' action="{% url 'select_point' %}">
+
+			{{ form.as_p }}
+			
+			<button type="submit" class="btn btn-secondary mt-2 float-right">Selecciona</button>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="row mt-5">
+	<div class="col col-12 col-md-8 mb-5">
+		<h4>Selecciona un punt de mesura de la llista</h4>
+		<div id="accordion">
+
+{% for area in area_all %}
+	{% if area.measure_point_set.all %}
+			<div class="card">
+				<div class="card-header">
+					
+					<a href="#" data-toggle="collapse" data-target="#collapse-{{area.id}}">
+					{{area.area}}
+					</a>
+					
+				</div>
+
+				<div id="collapse-{{area.id}}" class="collapse" data-parent="#accordion">
+					<div class="card-body">
+		{% for point in area.measure_point_set.all %}
+						<ul style="list-style-type: none;">
+							<li>
+								<span class="font-weight-bold">{{point.number}}</span>- {{point}}</span>
+								<a href=" {% url 'create_measure' %}?measure_point={{point.number}}"> <span class="badge badge-warning badge-pill float-right ml-3 ">seleccionar</span></a>
+							</li>
+						</ul>
+		{% endfor %}
+					</div>
+				</div>
+			</div>
+	{% endif %}	
+{% endfor %}
+		</div>
+	</div>
+</div>
+
+{% endblock %}

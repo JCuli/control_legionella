@@ -1,0 +1,157 @@
+{% extends "control/base.html" %}
+
+{% block title %}punt mesura{%endblock%}
+
+{% block content %}
+
+<div class="row mt-2 bg-light">
+	<div class="col col-12 col-md-6 ">
+		<h3> Crear una nova zona </h3>
+		<form method='POST'> {%csrf_token%}
+			{{form.as_p}}
+			<button type="submit" class="btn btn-secondary float-right mt-2 mb-3">Guardar</button>
+		</form>
+	</div>
+</div>
+
+<div class="row mt-3 mb-5">
+	<div class="col col-12 col-md-6 ">
+		<h4 class="text-center"> Zones actuals: </h4>
+		<ul id="simpleList" class="list-group" data-d='{% url "set_area_order" %}'>
+			{% for area in areas %}
+				<li class="list-group-item" data-id="{{area.id}}">
+					<span class="my-handle ">
+						<span>::</span>
+						<span class="area">{{area}}</span>
+					</span>
+
+					<span class="badge badge-warning badge-pill float-right ml-3 js-edit">editar</span>
+					<span class="badge badge-danger badge-pill float-right js-delete">eliminar</span>
+				</li>	
+			{% endfor %}
+		</ul>
+	</div>
+</div>
+<!-- MODAL -->
+<div class="modal" tabindex="-1" role="dialog" id="Modal_change_area">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Canvia el nom de la zona.</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        
+			<div class="form-group">
+				<label>Nou nom:</label>
+				<input type="text" class="form-control" id="new_area_name">
+			</div>
+		
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="modal_submit">Guardar</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tancar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- END MODAL -->
+
+{% endblock content %}
+
+{% block js %}
+
+{% include 'snippets/ajax.html' %}
+ 
+<script>
+
+	let area_id, new_name, el
+
+	function sendlist(list) {
+		sort = list.toArray();
+		console.log(sort);
+		$.ajax({
+            method: "POST",
+            url: $('#simpleList').data('d'),
+            data: {'data':sort.toString()},
+            success: function(data, textStatus, jqXHR){
+            	console.log(data['data'])
+            },
+        });
+	}
+
+	function edit_element() {
+		console.log(area_id.toString(), new_name.toString())
+		$.ajax({
+            method: "POST",
+            url: $('#simpleList').data('d'),
+            data: {'element_id':area_id.toString(), 'area':new_name.toString(), 'action':'edit'},
+            success: function(data, textStatus, jqXHR){
+            	console.log(data['data'])
+            },
+        });
+	}
+
+	function delete_area() {
+		$.ajax({
+            method: "POST",
+            url: $('#simpleList').data('d'),
+            data: {'element_id':area_id.toString(), 'action':'delete'},
+            success: function(data, textStatus, jqXHR){
+            	console.log(data['error'])
+            },
+        });
+
+
+	}
+
+    // Simple list
+    let list = Sortable.create(simpleList, {
+		handle: ".my-handle",
+		animation: 150,
+		onEnd: function () {
+			sendlist(list);
+		},
+		filter: '.js-edit, .js-delete',
+		// onFilter: function (evt) {
+		//     let ctrl = evt.target;
+		//     if (Sortable.utils.is(ctrl, '.js-edit')) {
+		// 		let el = evt.item.querySelector(".area"),
+		// 		name = el.innerHTML;
+		// 		new_name = prompt("Canvia el nom:", name);
+		// 		el.innerHTML = new_name;
+		// 		let element_id = evt.item.dataset.id;
+		// 		console.log(new_name);
+		// 		edit_element(element_id, new_name);
+		// 	};
+		// }
+		onFilter: function (evt) {
+		    let ctrl = evt.target;
+		    area_id = evt.item.dataset.id
+		    if (Sortable.utils.is(ctrl, '.js-edit')) {
+				el = evt.item.querySelector(".area"),
+				name = el.innerHTML;
+				$('#new_area_name').val(name)
+				$('#Modal_change_area').modal('show');
+			}
+			else if (Sortable.utils.is(ctrl, '.js-delete')) {
+				console.log(area_id);
+				delete_area();
+				evt.item.parentNode.removeChild(evt.item); // remove sortable item
+			};
+		}
+	});
+
+	$('#modal_submit').click(function(){
+		new_name = $('#new_area_name').val();
+        $('#Modal_change_area').modal('hide');
+        el.innerHTML = new_name; // change name sortable item
+        edit_element();
+    })
+
+	
+</script>
+
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "control/base.html" %}
+
+{% block title %}punt mesura{%endblock%}
+
+{% block content %}
+
+<div class="row mt-2">
+	<div class="col col-12 col-md-6">
+		<h3 class="mt-2 mb-4 text-center"> Edita el punt:<br> "{{form.instance}}" </h3>
+		<form method='POST'> {%csrf_token%}
+			
+		
+		<div class="form-group">
+			<div> {{form.number.errors}} </div>
+			<label> {{form.number.label}} </label>
+			{{form.number}}
+		</div>
+
+		<div class="form-group">
+			<div> {{form.name.errors}} </div>
+			<label>{{form.name.label}}</label>
+			{{form.name}}
+		</div>
+
+		<div class="form-group">
+			<div> {{form.area.errors}} </div>
+			<label>{{form.area.label}}</label>
+			{{form.area}}
+		</div>
+		
+		<label >{{form.type_measure.label}}</label>
+		<div class="form-group">
+			<div> {{form.type_measure.errors}} </div>
+
+{% for choice in form.type_measure.field.choices %}
+
+			<div class="form-check mb-3 ml-4">
+			<label>
+				<input type="checkbox" class="form-check-input" name="{{ form.type_measure.name }}" value="{{ choice.0 }}" {% if choice.0 in form.type_measure.value %} checked {% endif %}">
+				<span class="form-check-label">{{ choice.1 }}</span>
+			</label>
+			</div>
+
+{% endfor %}
+
+		</div>
+		<button type="submit" name="delete" class="btn btn-danger float-right">Eliminar</button>
+		<button type="submit" class="btn btn-secondary  mr-2 float-right">Guardar</button>
+			
+		</form>
+	</div>
+</div>
+
+{% endblock content %}

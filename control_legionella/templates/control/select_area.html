@@ -1,0 +1,27 @@
+{% extends "control/base.html" %}
+
+{% block title %}area{%endblock%}
+
+{% block content %}
+
+<div class="row mt-2">
+	<div class="col col-12 col-lg-9">
+		<div class="card bg-light mb-3">
+		<h5 class="card-header text-center">Nova mesura</a></h5>
+			<div class="card-body">
+	
+			<form method='GET' action="{% url 'select_point' %}" >
+
+			{{ form.as_p }}
+			
+			<button type="submit" class="btn btn-secondary float-right mt-2">Save</button>
+
+
+			</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+{% endblock %}
