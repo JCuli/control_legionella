@@ -1,7 +1,8 @@
 from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.auth.views import LoginView, logout,PasswordChangeView, PasswordChangeDoneView
-# from django.conf.urls.static import static
+from django.conf.urls.static import static
+from django.conf import settings
 from control.views import home_view,\
                             create_measure_view,\
                             select_area_view,\
