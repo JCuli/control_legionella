@@ -5,18 +5,26 @@
 {% block content %}
 
 
-<div class="card bg-light">
-	<h5 class="card-header text-center">Selecciona fred o calent pel punt: "{{ measure_point }}"</a></h5>
-	<div class="card-body">
-		<form method="GET" id="form">
-			<input name="measure_point" value="{{measure_point.number}}" class="d-none">
-			{{form.as_p}}
+
+
+<div class="row mt-5 align-content-center">
+	<div class="col col-12 col-md-6 offset-md-3">	
+		<div class="border p-3 clearfix mb-5 bg-light">
+			<h4 class="mt-2 ml-5 font-weight-bold">{{ measure_point }}</h4>
+			<h5 class="ml-5" >Selecciona fred o calent</h5>
+			<div >
+				<form method="GET" id="form">
+					<input name="measure_point" value="{{measure_point.number}}" class="d-none">
+					{{form.as_p}}
+					
 			{% for x,y in form.fields.type_measure.choices %}
-			<button type="button" class="btn {% if y == 'freda' %}btn-primary{% elif y == 'calenta' %}btn-danger{% endif %} d-block mt-2 button_type" value="{{x}}">{{y}}</button>
+						<button type="button" class="btn {% if y == 'freda' %}btn-primary{% elif y == 'calenta' %}btn-danger{% else %}btn-secondary{% endif %} mt-5 ml-5 button_type" value="{{x}}">{{y}}</button>
 			{% endfor %}
-		</form>
+					
+				</form>
+			</div>
+		</div>
 	</div>
-		
 </div>
 
 

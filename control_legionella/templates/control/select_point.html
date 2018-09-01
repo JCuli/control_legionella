@@ -4,17 +4,17 @@
 
 {% block content %}
 
-<div class="row mt-2">
+<div class="row mt-2 bg-light">
 	<div class="col col-12 col-md-8">	
 		<h4>Selecciona un punt de mesura per numero</h4>
-		<div class="border p-2 clearfix">
+		
 			<form method='GET' action="{% url 'select_point' %}">
 
 			{{ form.as_p }}
 			
-			<button type="submit" class="btn btn-secondary mt-2 float-right">Selecciona</button>
+			<button type="submit" class="btn btn-secondary mt-2 mb-3 float-right">Selecciona</button>
 			</form>
-		</div>
+		
 	</div>
 </div>
 

@@ -40,6 +40,8 @@ class Create_measure_form(forms.ModelForm):
 			'status_OK'
 		]
 
+# Create_measure_FormSet = forms.modelformset_factory(Measure,form=Create_measure_form, extra=0)
+
 class Select_area_form(forms.ModelForm):
 	
 	c=Area.objects.all().order_by("area")

@@ -46,7 +46,7 @@ class Measure_point(models.Model):
 class Measure(models.Model):
 
 	temperature			= models.DecimalField(max_digits=4, decimal_places=2)
-	measure_point		= models.ForeignKey(Measure_point, blank=False, null=False,on_delete=models.PROTECT)
+	measure_point		= models.ForeignKey(Measure_point, blank=False, null=False,on_delete=models.CASCADE)
 	type_measure 		= models.ForeignKey(Type_measure, blank=False, null=False,on_delete=models.PROTECT)
 	date_created		= models.DateTimeField(auto_now=False, auto_now_add=True, null=True)	
 	date_modified		= models.DateTimeField(auto_now=True, auto_now_add=False, null=True)

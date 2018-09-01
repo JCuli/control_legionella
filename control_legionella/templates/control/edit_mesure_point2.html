@@ -44,11 +44,31 @@
 {% endfor %}
 
 		</div>
-		<button type="submit" name="delete" class="btn btn-danger float-right">Eliminar</button>
-		<button type="submit" class="btn btn-secondary  mr-2 float-right">Guardar</button>
-			
+		<button type="submit" class="btn btn-success  ml-5 float-right">Guardar</button>
+		<button type="button" name="delete"  data-toggle="modal" data-target="#warning_delete" class="btn btn-danger float-right">Eliminar</button>
+		<!-- Modal -->
+<div class="modal " id="warning_delete" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Atencio!</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Hi ha {{form.instance.measure_set.all.count}} mesures asociades a "{{form.instance.name}}". Si el borres  tambe seran eliminades.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" name="delete"   class="btn btn-danger float-right">Eliminar</button>	
+      </div>
+    </div>
+  </div>
+</div>	
 		</form>
 	</div>
 </div>
+
 
 {% endblock content %}

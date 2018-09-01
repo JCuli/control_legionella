@@ -26,12 +26,12 @@
 						</tr>
 						<tr class="table_head" >
 							<th class="border-top-0" width="4%"></th>
-							<th class="border-top-0 text-center" width="32%" >Punt</th>
-							<th class="border-top-0" width="15%">1r. trim.</th>
-							<th class="border-top-0" width="15%">2n. trim.</th>
-							<th class="border-top-0" width="15%">3r. trim.</th>
-							<th class="border-top-0" width="15%">4t. trim.</th>
-							<th class="border-top-0" width="4%"></th>
+							<th class="border-top-0 text-center nowrap" width="32%" >Punt de mesura </th>
+							<th class="border-top-0 nowrap" width="15%">1r. trim.</th>
+							<th class="border-top-0 nowrap" width="15%">2n. trim.</th>
+							<th class="border-top-0 nowrap" width="15%">3r. trim.</th>
+							<th class="border-top-0 nowrap" width="15%">4t. trim.</th>
+							<th class="border-top-0 nowrap" width="4%"></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -54,7 +54,9 @@
 								<div class="collapse {{j.id}}-{{t.id}}">
 								{% for m in measure %}
 									{% if not forloop.last %}
-									<div class="font-weight-bold mb-1">{{m.temperature|stringformat:"04.1f"}}</span>ºC{% if not m.status_OK %}<span class="text-danger">**</span>{% endif %}<span class="small text-muted"><br>({{m.date_created|date:"d M"}})</div>
+									<div>
+										<span class="font-weight-bold mb-1">{{m.temperature|stringformat:"04.1f"}}</span>ºC{% if not m.status_OK %}<span class="text-danger">**</span>{% endif %}<span class="small text-muted"><br>({{m.date_created|date:"d M"}})</span>
+									</div>
 									{% endif %}
 								{% endfor %}
 								</div>

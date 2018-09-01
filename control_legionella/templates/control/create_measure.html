@@ -4,12 +4,12 @@
 
 {% block content %}
 
-<div class="row mt-2">
-	<div class="col col-12 col-lg-9">
-		<div class="card bg-light mb-3">
-		<h5 class="card-header text-center">{{measure_point}} ({% now "j-b-Y H:i" %})</a></h5>
-			<div class="card-body">
-	
+
+<div class="row mt-5">
+	<div class="col col-12 col-md-6 offset-md-3">	
+		<h4 class="font-weight-bold ml-3">{{measure_point}}</h4>
+		<h6 class="mb-5 ml-3">{% now "j M, Y (H:i)" %}</h6>
+		<div class=" p-3 clearfix mb-5 ">
 			<form method='POST'> {%csrf_token%}
 				<div class="form-group">
 					<label> Temperatura {{type_measure}}: </label>
@@ -19,19 +19,18 @@
 				    {{ form.measure_point }}
 					{{ form.type_measure }}
 				</div>
-				<div class="form-group">
+				<div class="form-group mt-4">
 					<label> La conservacio es correcta: </label>
 				    {{ form.status_OK }}
 				    <span> {{ form.status_OK.errors }} </span>
 				    
 				    
 				</div>
-				<button type="submit" name="seguent" class="btn btn-secondary float-right mt-2 ml-2">Guardar i seguent</button>
-				<button type="submit" class="btn btn-secondary float-right mt-2">Guardar</button>
+				<button type="submit" name="seguent" class="btn btn-secondary float-right mt-5 ml-5">Guardar i seguent</button>
+				<button type="submit" class="btn btn-secondary float-right mt-5">Guardar</button>
 
 
 			</form>
-			</div>
 		</div>
 	</div>
 </div>
