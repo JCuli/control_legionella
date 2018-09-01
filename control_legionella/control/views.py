@@ -3,10 +3,12 @@ from django.http import JsonResponse
 from django.core.urlresolvers import reverse
 from django.db.models import Max
 from django.db import transaction
+from django.contrib.auth.decorators import login_required
 from datetime import date, datetime
 from .models import Measure, Area
 from .forms import *
 
+@login_required()
 def home_view(request):
 	year 					= datetime.now().year
 	measure_query 			= Measure.objects.filter(date_created__year=year)
@@ -22,7 +24,7 @@ def home_view(request):
 
 	return render(request, 'control/list.html', context)
 
-
+@login_required()
 def select_point_view(request):
 	
 	form 		= Select_point_form(request.GET or None)
@@ -44,6 +46,7 @@ def select_point_view(request):
 	return render (request, 'control/select_point.html', context)
 
 
+@login_required()
 def create_measure_view(request,*args,**kwargs):
 	
 	measure_point 			= request.GET.get('measure_point')
@@ -80,6 +83,7 @@ def create_measure_view(request,*args,**kwargs):
 		if form.is_valid():
 			instance = form.save(commit=False)
 			instance.user_created = request.user
+			instance.quarter = (datetime.now().month-1)//3+1
 			instance.save()
 			if "seguent" in request.POST:
 				current_weight = measure_point.weight
@@ -99,6 +103,8 @@ def create_measure_view(request,*args,**kwargs):
 	
 	return render(request, 'control/create_measure.html', context)
 
+
+@login_required()
 def select_area_view(request):
 	form 		= Select_area_form()
 	context = {
@@ -120,6 +126,7 @@ def select_area_view(request):
 # 	}
 # 	return render (request, 'control/select_point.html', context)
 
+@login_required()
 def create_measure_point_view(request,*arg, **kwargs):
 	form = Create_measure_point_form(request.POST or None, initial= {
 									'number': Measure_point.objects.all().aggregate(Max('number'))['number__max']+1
@@ -138,6 +145,7 @@ def create_measure_point_view(request,*arg, **kwargs):
 	return render(request, 'control/create_measure_point.html', context)
 
 
+@login_required()
 def create_area_view(request,*arg, **kwargs):
 	form = Create_area_form(request.POST or None)
 	if form.is_valid():
@@ -148,6 +156,7 @@ def create_area_view(request,*arg, **kwargs):
 	}
 	return render(request, 'control/create_area.html', context)
 
+@login_required()
 def set_area_order_view(request,*args, **kwargs):
 	error 	= ""
 	if request.is_ajax():
@@ -180,6 +189,7 @@ def set_area_order_view(request,*args, **kwargs):
 		
 	return JsonResponse({'data':'OK','error':error})
 
+@login_required()
 def edit_mesure_point_view(request,*args,**kwargs):
 
 	area_all 				= Area.objects.all()
@@ -193,6 +203,8 @@ def edit_mesure_point_view(request,*args,**kwargs):
 	
 
 
+@login_required()
+@login_required()
 def edit_mesure_point2_view(request, *args, **kwargs):
 	point_id 			= request.GET.get('point')
 	point_instance 		= Measure_point.objects.filter(id=point_id)
@@ -216,6 +228,7 @@ def edit_mesure_point2_view(request, *args, **kwargs):
 		}
 		return render(request, 'control/edit_mesure_point2.html', context)
 
+@login_required()
 def set_point_order_view(request,*args, **kwargs):
 	error 	= ""
 	if request.is_ajax():

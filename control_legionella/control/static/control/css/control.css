@@ -7,7 +7,7 @@
 	background-color: red;
 }*/
 
-.js-edit, .js-delete {
+.js-edit, .js-delete, .pointer {
 	cursor: pointer;
 }
 

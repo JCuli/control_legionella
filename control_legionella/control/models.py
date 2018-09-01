@@ -52,7 +52,7 @@ class Measure(models.Model):
 	date_modified		= models.DateTimeField(auto_now=True, auto_now_add=False, null=True)
 	user_created		= models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
 	status_OK 			= models.BooleanField()
-	
+	quarter 			= models.IntegerField(null=False, unique=False)
 
 	class Meta:
 		verbose_name		 	= 'Mesure'
@@ -60,7 +60,7 @@ class Measure(models.Model):
 
 	def __str__(self): return str(self.id)
 
-	@property
-	def quarter(self):
-		quarter = (self.date_created.month-1)//3+1
-		return quarter
+	# @property
+	# def quarter(self):
+	# 	quarter = (self.date_created.month-1)//3+1
+	# 	return quarter

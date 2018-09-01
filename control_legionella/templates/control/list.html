@@ -3,7 +3,9 @@
 {% block title %}home{%endblock%}
 
 {% block content %}
+{% load static %}
 
+{% load measures_in_point %}
 
 
 <div class="row ">
@@ -12,51 +14,106 @@
 	</div>
 </div>
 {% for a in area_all %}
-<!-- TABLE -->
-<div class="row ">
-	<!-- <div class="col"> -->
-		<div class=" col table-responsive">
-			<div class="  mt-2" style="border-style:solid; border-width:1px; border-color:#8c8cd9;">
-				<table class="table table-striped table-sm">
+	{% if a.measure_point_set.all %}
+	<!-- TABLE -->
+	<div class="row ">	
+		<div class="table-responsive">
+			<div class=" mt-2" style="border-style:solid; border-width:1px; border-color:#8c8cd9;overflow: auto">
+				<table class="table table-striped table-sm mb-0">
 					<thead >
 						<tr class="table_head">
-							<th colspan="5" class="text-center border-bottom-0 border-top-0">{{a}}</th>
+							<th colspan="7" class="text-center border-bottom-0 border-top-0">{{a}}</th>
 						</tr>
 						<tr class="table_head" >
-							<th class="border-top-0">Punt</th>
-							<th class="border-top-0">1 trimestre</th>
-							<th class="border-top-0">2 trimestre</th>
-							<th class="border-top-0">3 trimestre</th>
-							<th class="border-top-0">4 trimestre</th>
+							<th class="border-top-0" width="4%"></th>
+							<th class="border-top-0 text-center" width="32%" >Punt</th>
+							<th class="border-top-0" width="15%">1r. trim.</th>
+							<th class="border-top-0" width="15%">2n. trim.</th>
+							<th class="border-top-0" width="15%">3r. trim.</th>
+							<th class="border-top-0" width="15%">4t. trim.</th>
+							<th class="border-top-0" width="4%"></th>
 						</tr>
 					</thead>
 					<tbody>
-			{% for j in measure_point_query %}
-				{% if j.area == a %}		
-					{% for t in j.type_measure.all %}
-						<tr>
-							<td >{{j.number|stringformat:"02d"}}- {{j.name}} ({{t}})</td>
-						{% for q in range %}
-							<td>
-								{% for i in measure_query %}
-									{% if i.measure_point == j and i.quarter == q %}
-										<div >{{i.temperature|stringformat:"04.1f"}}ºC ({{ i.date_created|date:"d-m" }}){% if not i.status_OK %}<span class="text-danger">**</span>{% endif %}</div>
+		{% for j in a.measure_point_set.all %}	
+			{% for t in j.type_measure.all %}
+
+						<tr class="point_row">
+
+							<td class = "font-weight-bold {% if t.type_measure == 'freda' %}table-primary{% elif t.type_measure == 'calenta' %}table-danger"{% else %}table-secondary"{% endif %}" >{{j.number|stringformat:"02d"}}</td>
+
+							<td >{{j.name}}</td>
+
+				
+					{% for q in range %}
+						{% measures_in_point measure_query j t q as measure %}
+
+							<td class="quarter" data-expand="{% if measure.count > 1 %}expand{% endif %}">	
+							{% if measure %}
+<!-- COLLAPSABLE LIST --> 
+								<div class="collapse {{j.id}}-{{t.id}}">
+								{% for m in measure %}
+									{% if not forloop.last %}
+									<div class="font-weight-bold mb-1">{{m.temperature|stringformat:"04.1f"}}</span>ºC{% if not m.status_OK %}<span class="text-danger">**</span>{% endif %}<span class="small text-muted"><br>({{m.date_created|date:"d M"}})</div>
 									{% endif %}
 								{% endfor %}
-							</td>
-						{% endfor %}	
-						</tr>
+								</div>
+<!-- END COLLAPSABLE LIST -->			
+								<div>
+									<span class="font-weight-bold">{{measure.last.temperature|stringformat:"04.1f"}}</span>ºC{% if not measure.last.status_OK %}<span class="text-danger">**</span>{% endif %}<span class="small text-muted"><br>({{measure.last.date_created|date:"d M"}})</span>
+								</div>
+							{% endif %}					
+							</td>					
 					{% endfor %}
-				{% endif %}
+							<td>
+								<img class="expand_icon pointer" src="{% static 'control/expand_down.png' %}" style="height:1em; display:none;" id="{{j.id}}-{{t.id}}">
+							</td>	
+				
+						</tr>
 			{% endfor %}
+		{% endfor %}
 					</tbody>
 				</table>
-			</div>
-	{% endfor %}
-		
+			</div>	
+		</div>
 	</div>
-</div>
-<!-- END TABLE -->
-
+	<!-- END TABLE -->
+	{% endif %}
+{% endfor %}
+<div class="row mb-5"><br></div>
+<div class="row mb-5"><br></div>
 
 {% endblock %}
+
+{% block js %}
+<script>
+$(document).ready(function(){
+
+	let expand;
+	$('.point_row').each(function(){
+
+		let point_row = $(this)
+		point_row.find('.quarter').each(function(){
+			expand = $(this).data('expand');
+			if (expand == "expand"){
+				console.log($(this).attr('id'), "expand");
+				point_row.find('.expand_icon').show();
+			};
+			expand = "";
+		})
+	});
+
+	$('.expand_icon').click(function(){
+		console.log("clicked");
+		// $(this).closest('.collapse').collapse('show');
+		let collapse_class=$(this).attr('id');
+		console.log(collapse_class);
+		$(".collapse"+"."+collapse_class).collapse('toggle');
+
+	});
+
+})
+
+
+</script>
+{% endblock %}	
