@@ -17,16 +17,14 @@
 <div class="row mt-3 mb-5">
 	<div class="col col-12 col-md-6 ">
 		<h4 class="text-center"> Zones actuals: </h4>
+		<div class="text-muted">Aqui es poden editar i ordenar les zones</div>
 		<ul id="simpleList" class="list-group" data-d='{% url "set_area_order" %}'>
 			{% for area in areas %}
-				<li class="list-group-item" data-id="{{area.id}}">
-					<span class="my-handle ">
-						<span>::</span>
-						<span class="area">{{area}}</span>
-					</span>
-
-					<span class="badge badge-warning badge-pill float-right ml-3 js-edit">editar</span>
-					<span class="badge badge-danger badge-pill float-right js-delete">eliminar</span>
+				<li class="list-group-item " data-id="{{area.id}}">
+					<span class="area">{{area}}</span>
+					<span class="badge badge-warning badge-pill float-right ml-5 js-edit">editar</span>
+					
+					
 				</li>	
 			{% endfor %}
 		</ul>
@@ -51,8 +49,10 @@
 		
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" id="modal_submit">Guardar</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tancar</button>
+      	<button type="button" class="btn btn-secondary mr-3" data-dismiss="modal">Tancar</button>
+      	<button type="button" class="btn btn-danger mr-3" id="modal_delete">Borrar</button>
+        <button type="button" class="btn btn-success" id="modal_submit">Guardar</button>
+        
       </div>
     </div>
   </div>
@@ -67,7 +67,7 @@
  
 <script>
 
-	let area_id, new_name, el
+	let area_id, new_name, el, item_to_remove
 
 	function sendlist(list) {
 		sort = list.toArray();
@@ -109,38 +109,28 @@
 
     // Simple list
     let list = Sortable.create(simpleList, {
-		handle: ".my-handle",
+		// handle: ".my-handle",
 		animation: 150,
 		onEnd: function () {
 			sendlist(list);
 		},
 		filter: '.js-edit, .js-delete',
-		// onFilter: function (evt) {
-		//     let ctrl = evt.target;
-		//     if (Sortable.utils.is(ctrl, '.js-edit')) {
-		// 		let el = evt.item.querySelector(".area"),
-		// 		name = el.innerHTML;
-		// 		new_name = prompt("Canvia el nom:", name);
-		// 		el.innerHTML = new_name;
-		// 		let element_id = evt.item.dataset.id;
-		// 		console.log(new_name);
-		// 		edit_element(element_id, new_name);
-		// 	};
-		// }
+		
 		onFilter: function (evt) {
 		    let ctrl = evt.target;
 		    area_id = evt.item.dataset.id
+		    item_to_remove= evt.item // remove sortable item
 		    if (Sortable.utils.is(ctrl, '.js-edit')) {
 				el = evt.item.querySelector(".area"),
 				name = el.innerHTML;
 				$('#new_area_name').val(name)
 				$('#Modal_change_area').modal('show');
-			}
-			else if (Sortable.utils.is(ctrl, '.js-delete')) {
-				console.log(area_id);
-				delete_area();
-				evt.item.parentNode.removeChild(evt.item); // remove sortable item
 			};
+			// else if (Sortable.utils.is(ctrl, '.js-delete')) {
+			// 	console.log(area_id);
+			// 	delete_area();
+			// 	evt.item.parentNode.removeChild(evt.item); // remove sortable item
+			// };
 		}
 	});
 
@@ -149,6 +139,13 @@
         $('#Modal_change_area').modal('hide');
         el.innerHTML = new_name; // change name sortable item
         edit_element();
+    })
+
+    $('#modal_delete').click(function(){
+    	delete_area();
+    	$('#Modal_change_area').modal('hide');
+    	item_to_remove.parentNode.removeChild(item_to_remove);
+
     })
 
 	

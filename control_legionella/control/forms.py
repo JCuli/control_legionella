@@ -18,7 +18,7 @@ class Create_measure_form(forms.ModelForm):
 									'class':"d-none"})
 							)
 	temperature 		= forms.DecimalField(
-							required=False,
+							required=True,
 							label= "Temperatura",
 							widget = forms.NumberInput(attrs={
 									'placeholder':"ºC",
@@ -112,7 +112,7 @@ class Create_measure_point_form(forms.ModelForm):
 	area 		= forms.ModelChoiceField(
 							queryset=Area.objects.all(),
 							required=False,
-							label = "Area",
+							label = "Zona",
 							widget = forms.Select(attrs={
 								'class':"form-control",
 							})

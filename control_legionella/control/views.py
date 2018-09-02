@@ -52,10 +52,22 @@ def create_measure_view(request,*args,**kwargs):
 	measure_point 			= request.GET.get('measure_point')
 	measure_point_qs 		= Measure_point.objects.filter(number=measure_point)
 	type_measure 			= request.GET.get('type_measure')
-
+	
+	
+	
 
 	if measure_point_qs:
 		measure_point 		= Measure_point.objects.get(number=measure_point)
+		if "next_point" in request.GET:
+			next_point 		= Measure_point.objects.filter(weight=measure_point.weight+1)
+			if next_point:
+				next_point 	= next_point.first()
+				url = reverse('create_measure') + f"?measure_point={next_point.number}"							
+				return redirect(url)
+			else:
+				return redirect('select_point')
+
+
 		if measure_point and type_measure:
 			type_measure 	= Type_measure.objects.get(id=type_measure)
 			form 			= Create_measure_form(request.POST or None, initial={'measure_point':measure_point,
@@ -86,17 +98,18 @@ def create_measure_view(request,*args,**kwargs):
 			instance.quarter = (datetime.now().month-1)//3+1
 			instance.save()
 			if "seguent" in request.POST:
-				current_weight = measure_point.weight
-				while current_weight < Measure_point.objects.all().aggregate(Max('weight'))['weight__max']:
-					print(current_weight)
-					print(Measure_point.objects.all().aggregate(Max('weight'))['weight__max'])
-					try:
-						next_measure_point = Measure_point.objects.get(weight=current_weight+1)
-						url = reverse('create_measure') + f"?measure_point={next_measure_point.number}"
+				if instance.measure_point.type_measure.all().count() > 1:
+					previous_measure_point = Measure.objects.get(id=instance.pk-1).measure_point
+					if previous_measure_point != instance.measure_point:
+						url = reverse('create_measure') + f"?measure_point={instance.measure_point.number}"							
 						return redirect(url)
-					except:
-						current_weight = current_weight +1
 				
+				current_weight = measure_point.weight	
+				next_measure_point = Measure_point.objects.filter(weight=current_weight+1)
+				if next_measure_point:
+					next_measure_point = Measure_point.objects.get(weight=current_weight+1)
+					url = reverse('create_measure') + f"?measure_point={next_measure_point.number}"
+					return redirect(url)
 				else:
 					error= "Aquest es l'ultim punt."
 			return redirect('select_point')
@@ -112,32 +125,41 @@ def select_area_view(request):
 	}
 	return render (request, 'control/select_area.html', context)
 
-# def select_point_view(request):
-# 	areas 		= request.GET.getlist('area')
-	
-# 	areas_qs 	= Area.objects.filter(id__in=areas)
-	
-# 	queryset= Measure_point.objects.filter(area__in=areas_qs)
-	
-# 	form 		= Select_point_form()
-# 	form.fields['id'].queryset = queryset
-# 	context = {
-# 				'form':form
-# 	}
-# 	return render (request, 'control/select_point.html', context)
 
 @login_required()
 def create_measure_point_view(request,*arg, **kwargs):
-	form = Create_measure_point_form(request.POST or None, initial= {
-									'number': Measure_point.objects.all().aggregate(Max('number'))['number__max']+1
-									})
-	if form.is_valid():
-		instance = form.save(commit=False)
-		instance.weight = 	Measure_point.objects.all().aggregate(Max('weight'))['weight__max']+1
-		instance.save()
-		form.save_m2m()
+
+	if request.POST:
+		form = Create_measure_point_form(request.POST)
+		if form.is_valid():
+			instance = form.save(commit=False)
+			try:
+				instance.weight = 	Measure_point.objects.all().aggregate(Max('weight'))['weight__max']+1
+			except TypeError as error:
+				instance.weight = 1
+			instance.save()
+			form.save_m2m()
+		else:
+			context 	= { 'form':form
+			}
+			return render(request, 'control/create_measure_point.html', context)
+
+	
+	try:
+		if Measure_point.objects.all().order_by('id').last():
+			last_point = Measure_point.objects.all().order_by('id').last()
+			form = Create_measure_point_form(initial= {
+										'number': Measure_point.objects.all().aggregate(Max('number'))['number__max']+1,
+										'area': last_point.area.pk,
+										})
+		else:
+			form = Create_measure_point_form(initial= {
+										'number': Measure_point.objects.all().aggregate(Max('number'))['number__max']+1,
+										})
+
+	except TypeError:
 		form = Create_measure_point_form(initial= {
-									'number': Measure_point.objects.all().aggregate(Max('number'))['number__max']+1
+									'number':1,
 									})
 
 	context 	= { 'form':form

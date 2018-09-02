@@ -5,7 +5,7 @@ from datetime import date
 User= settings.AUTH_USER_MODEL
 
 class Area(models.Model):
-	area				= models.CharField(max_length=50, null=False, unique=True)
+	area				= models.CharField(max_length=50, null=False, unique=True, error_messages={'unique':"Ja existeix!"})
 	weight 				= models.IntegerField(null=True, unique=False) 
 
 	class Meta:

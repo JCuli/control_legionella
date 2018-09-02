@@ -25,3 +25,7 @@
 .nowrap {
 	white-space: nowrap;
 }
+
+.errorlist {
+	color:red;
+}

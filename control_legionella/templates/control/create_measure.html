@@ -7,12 +7,13 @@
 
 <div class="row mt-5">
 	<div class="col col-12 col-md-6 offset-md-3">	
-		<h4 class="font-weight-bold ml-3">{{measure_point}}</h4>
-		<h6 class="mb-5 ml-3">{% now "j M, Y (H:i)" %}</h6>
+		<h4 class="font-weight-bold ml-3">{{measure_point.number}} - {{measure_point}}</h4>
+		<h5 class="ml-3">Zona: {{measure_point.area}}</h5>
+		<h6 class="mb-5 ml-3 text-muted">({% now "j M, Y" %} Hora: {% now "H:i" %})</h6>
 		<div class=" p-3 clearfix mb-5 ">
 			<form method='POST'> {%csrf_token%}
 				<div class="form-group">
-					<label> Temperatura {{type_measure}}: </label>
+					<label> Temperatura {% if type_measure.type_measure == "freda" %}<span class="text-primary">freda</span>:{% elif type_measure.type_measure == "calenta" %}<span class="text-danger">calenta</span>: {%else%}{{type_measure}}:{% endif %}</label>
 				    {{ form.temperature }}
 				    <span> {{ form.temperature.errors }} </span>
 				    <span> {{ form.non_field_errors }} </span>
