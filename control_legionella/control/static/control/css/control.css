@@ -29,3 +29,8 @@
 .errorlist {
 	color:red;
 }
+
+.select_item:hover {
+	cursor: pointer;
+	
+}

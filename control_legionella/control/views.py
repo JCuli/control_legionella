@@ -5,30 +5,75 @@ from django.db.models import Max
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
 from datetime import date, datetime
+from django.utils import timezone
 from .models import Measure, Area
 from .forms import *
 
 @login_required()
-def home_view(request):
+def list_view(request):
 	year 					= datetime.now().year
 	measure_query 			= Measure.objects.filter(date_created__year=year)
-	measure_point_query 	= Measure_point.objects.all()
-	area_all 				= measure_query.values_list('measure_point__area', flat=True).distinct()
+	measure_query 			= measure_query.values('id','note', 'measure_point_id', 'type_measure_id', 'month','temperature','chloride', 'date_created','status_OK')
+	measure_point_query 	= Measure_point.objects.all().order_by('name').prefetch_related('area', 'type_measure')
+	area_all 				= Measure_point.objects.all().values_list('area', flat=True)
 	area_all 				= Area.objects.filter(id__in=area_all)
 	context 				= {	'measure_query':measure_query,
 								'measure_point_query':measure_point_query,
-								'range': range(1,5),
+								'range': range(1,13),
 								'year':year,
-								'area_all':Area.objects.all()
+								'area_all':area_all,
+								'type_measure_all':Type_measure.objects.all(),
+								'group_all': Measure_point_group.objects.all()
 							}
-
 	return render(request, 'control/list.html', context)
+
+
+@login_required()
+def month_view(request):
+	year 					= datetime.now().year
+	measure_query 			= Measure.objects.filter(date_created__year=year)
+	measure_query 			= measure_query.values('id','note','measure_point_id', 'type_measure_id', 'month','temperature','chloride', 'date_created','status_OK')
+	measure_point_query 	= Measure_point.objects.all().prefetch_related('area', 'type_measure')
+	area_all 				= Measure_point.objects.all().values_list('area', flat=True)
+	area_all 				= Area.objects.filter(id__in=area_all)
+
+	month 					= datetime.now().month
+	if year == datetime.now().year:
+		current_month = month
+	else:
+		current_month = 13
+
+
+
+	context 				= {	'measure_query':measure_query,
+								'measure_point_query':measure_point_query,
+								'year':year,
+								'area_all':area_all,
+								'type_measure_all':Type_measure.objects.all(),
+								'group_all': Measure_point_group.objects.all(),
+								'current_month': current_month
+							}
+	return render(request, 'control/list_month.html', context)
+
 
 @login_required()
 def select_point_view(request):
 	
-	form 		= Select_point_form(request.GET or None)
-	error 		= ""
+	form 			= Select_point_form(request.GET or None)
+	error 			= ""
+	current_month 	= datetime.now().month
+	suggested 		= []
+	suggested_qs	= Measure_point.objects.filter(group=current_month)
+	for measure_point in suggested_qs:
+		for type_measure in measure_point.type_measure.all():
+			max_date = measure_point.measure_set.filter(type_measure=type_measure).aggregate(Max('date_created'))
+			if max_date.get('date_created__max'):
+				if max_date.get('date_created__max') < timezone.now().replace(day=1, hour=0, minute=0, second=0):
+					suggested.append({'measure_point': measure_point, 'type_measure':type_measure })
+
+			else:
+				suggested.append({'measure_point': measure_point, 'type_measure':type_measure })
+	print(suggested)
 	if form.is_valid():
 		measure_point = int(form.cleaned_data.get('measure_point'))
 		measure_point_qs = Measure_point.objects.filter(number=measure_point)
@@ -41,7 +86,8 @@ def select_point_view(request):
 	context = {
 				'form':form,
 				'area_all':Area.objects.all(),
-				'error':error
+				'error':error,
+				'suggested':suggested
 	}
 	return render (request, 'control/select_point.html', context)
 
@@ -53,21 +99,9 @@ def create_measure_view(request,*args,**kwargs):
 	measure_point_qs 		= Measure_point.objects.filter(number=measure_point)
 	type_measure 			= request.GET.get('type_measure')
 	
-	
-	
 
 	if measure_point_qs:
 		measure_point 		= Measure_point.objects.get(number=measure_point)
-		if "next_point" in request.GET:
-			next_point 		= Measure_point.objects.filter(weight=measure_point.weight+1)
-			if next_point:
-				next_point 	= next_point.first()
-				url = reverse('create_measure') + f"?measure_point={next_point.number}"							
-				return redirect(url)
-			else:
-				return redirect('select_point')
-
-
 		if measure_point and type_measure:
 			type_measure 	= Type_measure.objects.get(id=type_measure)
 			form 			= Create_measure_form(request.POST or None, initial={'measure_point':measure_point,
@@ -79,50 +113,72 @@ def create_measure_view(request,*args,**kwargs):
 		elif measure_point.type_measure.count() > 1:
 			form = Select_type_form()
 			context 		= {'measure_point':measure_point,
-								'form':form
+								'form':form,
+								'current_group':datetime.now().month
 							}
 			return render(request, 'control/select_type.html', context)
 
 		context 	= {'form':form,
 					'measure_point':measure_point,
-					'type_measure':type_measure
+					'type_measure':type_measure,
+					'current_group':datetime.now().month
 		}
-	else:
-			return redirect('home')
 
-	if request.POST:
-		
+		if request.POST:
+			if form.is_valid():
+				instance = form.save(commit=False)
+				instance.user_created = request.user
+				instance.month = datetime.now().month
+				instance.save()
+				return redirect('select_point')
+		return render(request, 'control/create_measure.html', context)
+	else:
+		return redirect('month_view')
+
+@login_required()
+def edit_measure_view(request, *arg, **kwargs):
+	measure_id 		= request.GET.get('measure_id')
+	instance 		= Measure.objects.filter(id=measure_id)
+	if instance:
+		instance 	= Measure.objects.get(id=measure_id)
+		form 	 	= Create_measure_form(request.POST or None, instance=instance)
+		if "delete" in request.POST:
+			print(instance)
+			instance.delete()
+			return redirect('month_view')
 		if form.is_valid():
-			instance = form.save(commit=False)
-			instance.user_created = request.user
-			instance.quarter = (datetime.now().month-1)//3+1
-			instance.save()
-			if "seguent" in request.POST:
-				if instance.measure_point.type_measure.all().count() > 1:
-					previous_measure_point = Measure.objects.get(id=instance.pk-1).measure_point
-					if previous_measure_point != instance.measure_point:
-						url = reverse('create_measure') + f"?measure_point={instance.measure_point.number}"							
-						return redirect(url)
-				
-				current_weight = measure_point.weight	
-				next_measure_point = Measure_point.objects.filter(weight=current_weight+1)
-				if next_measure_point:
-					next_measure_point = Measure_point.objects.get(weight=current_weight+1)
-					url = reverse('create_measure') + f"?measure_point={next_measure_point.number}"
-					return redirect(url)
-				else:
-					error= "Aquest es l'ultim punt."
-			return redirect('select_point')
+			form.save()
+			return redirect('month_view')
+
+		context = {
+				'form':form
+		}
+		return render (request, 'control/edit_measure.html', context)
+	else:
+		return redirect('month_view')
+
 	
-	return render(request, 'control/create_measure.html', context)
+@login_required()
+def measure_view(request):
+	measure_id 		= request.GET.get('measure_id')
+	instance 		= Measure.objects.filter(id=measure_id)
+	if instance:
+		instance 	= Measure.objects.get(id=measure_id)
+		
+
+		context = {
+				'instance':instance
+		}
+		return render (request, 'control/measure_view.html', context)
+	else:
+		return redirect('month_view')
 
 
 @login_required()
 def select_area_view(request):
 	form 		= Select_area_form()
 	context = {
-				'form':form
-	}
+		}
 	return render (request, 'control/select_area.html', context)
 
 
@@ -212,12 +268,14 @@ def set_area_order_view(request,*args, **kwargs):
 	return JsonResponse({'data':'OK','error':error})
 
 @login_required()
-def edit_mesure_point_view(request,*args,**kwargs):
+def edit_measure_point_view(request,*args,**kwargs):
 
-	area_all 				= Area.objects.all()
-	measure_point_orphan 	= Measure_point.objects.filter(area__isnull=True)
+	measure_point_group_all = Measure_point_group.objects.all()
+	measure_point_orphan 	= Measure_point.objects.filter(group__isnull=True)
+	measure_point_all 	 	= Measure_point.objects.all()
 	
-	context 	= { 'area_all':area_all,
+	context 	= { 'measure_point_group_all':measure_point_group_all,
+					'measure_point_all':measure_point_all,
 					'measure_point_orphan': measure_point_orphan
 
 	}
@@ -225,9 +283,9 @@ def edit_mesure_point_view(request,*args,**kwargs):
 	
 
 
+
 @login_required()
-@login_required()
-def edit_mesure_point2_view(request, *args, **kwargs):
+def edit_measure_point2_view(request, *args, **kwargs):
 	point_id 			= request.GET.get('point')
 	point_instance 		= Measure_point.objects.filter(id=point_id)
 	if point_instance:
@@ -250,7 +308,7 @@ def edit_mesure_point2_view(request, *args, **kwargs):
 		}
 		return render(request, 'control/edit_mesure_point2.html', context)
 
-@login_required()
+
 def set_point_order_view(request,*args, **kwargs):
 	error 	= ""
 	if request.is_ajax():
@@ -262,14 +320,14 @@ def set_point_order_view(request,*args, **kwargs):
 				for element in points_array:
 					element = element.split('|')
 					# print(element)
-					if element[0] == "area":
-						area = element[1]
-						if area == "None":
-							area = None
+					if element[0] == "group":
+						group = element[1]
+						if group == "None":
+							group = None
 						else:
-							area = Area.objects.filter(id = area)
-							if area:
-								area = Area.objects.get(id = area)
+							group = Measure_point_group.objects.filter(id = group)
+							if group:
+								group = Measure_point_group.objects.get(id = group)
 							else:
 								break
 					if element[0] == "point":
@@ -279,10 +337,7 @@ def set_point_order_view(request,*args, **kwargs):
 							point_measure_instance = Measure_point.objects.get(id=point_id)
 							point_measure_instance.weight = weight
 							weight += 1
-							point_measure_instance.area = area
+							point_measure_instance.group = group
 							point_measure_instance.save()
-
-
-
 		
 	return JsonResponse({'data':'OK','error':error})

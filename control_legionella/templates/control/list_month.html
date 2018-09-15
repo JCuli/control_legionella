@@ -1,0 +1,195 @@
+{% extends "control/base.html" %}
+
+{% block title %}Per mesos{%endblock%}
+
+{% block content %}
+{% load static %}
+{% load measures_in_point %}
+
+
+<span id="current_month" data-cm="{{current_month}}">
+<div class="row ">
+	<div class="col text-center">
+		<h4 id="top">ANY {{year}}</h4>
+	</div>
+</div>
+
+<!-- TABLE -->
+<div class="row " id="parentScrollingContainer">	
+	<div class="table-responsive">
+		<table class="table table-striped table-bordered table-sm mb-0">
+			<thead >
+				<tr class="table_head">
+					<th class="border-0" width="5%"></th>
+					<th class="border-0" width="39%"></th>
+					<th class="border-0" width="12%"></th>
+					<th class="border-0" width="15%"></th>
+					<th class="border-0" width="11%"></th>
+					<th class="border-0" width="14%"></th>
+					<th class="border-0" width="4%"></th>
+				</tr>
+			</thead>
+			<tbody>
+
+{% for group in group_all %}
+				
+				<tr>
+					<th colspan="7" class="text-center text-uppercase border-bottom-0 border-top-0 table_head" id="{{group.id}}">{{group}}</th>
+				</tr>
+				<tr>
+					
+					<th class="border-top-0 table_head text-center nowrap" colspan="2">Punt de mesura </th>
+					<th class="border-top-0 table_head text-center nowrap" >Temp.</th>
+					<th class="border-top-0 table_head text-center nowrap" >Clor</th>
+					<th class="border-top-0 table_head text-center nowrap" >Estat</th>
+					<th class="border-top-0 table_head text-center nowrap" >Dia</th>
+					<th class="border-top-0 table_head"></th>
+				</tr>
+
+	{% for j in measure_point_query %}
+		{% if j.group == group %}	
+			{% for t in type_measure_all %}
+				{% if t in j.type_measure.all %}
+
+				<tr class="point_row">
+
+					<td class = "font-weight-bold {% if t.type_measure == 'freda' %}table-primary{% elif t.type_measure == 'calenta' %}table-danger"{% else %}table-secondary"{% endif %}" ><a href="{% url 'create_measure' %}?measure_point={{j.number}}&type_measure={{t.id}}">{{j.number|stringformat:"02d"}}</a></td>
+
+					<td >{{j.name}}<br><span class="text-muted">{{j.area}}</span></td>
+					
+		
+					
+						{% filter_cell measure_query j.id t.id group.id as cell %}
+
+					<td class="quarter {% if not cell.0 and current_month == group.id %} table-danger {% endif %} " data-expand="{% if cell.1 %}expand{% endif %}" colspan="4">
+						
+						{% if cell.0 %}
+							{% if cell.1 %}	
+						
+			
+<!-- COLLAPSABLE LIST --> 
+						<div class="collapse {{j.id}}-{{t.id}}">
+								{% for m in cell.1 %}
+
+							<div class="row no-gutters">
+								<div class="col col-3 text-center">
+									{% if m.temperature %}
+									<span class="font-weight-bold">{{m.temperature|stringformat:"04.1f"}}</span>ºC
+									{% else %}-{% endif %}
+								</div>
+								<div class="col col-3 pl-1 text-center">
+									{% if m.chloride %}
+									<span class="nowrap"><span class="font-weight-bold">{{m.chloride|stringformat:"03.1f"}}</span>
+									<span class="small">ppm</span></span>
+									{% else %}-{% endif %}
+								</div>
+								<div class="col col-3 pl-2 text-center">
+									{% if not m.status_OK %}<span class="text-danger ml-2">**</span>{% endif %}
+									{% if m.note %}<a class="ml-2" href="{% url 'edit_measure' %}?measure_id={{cell.0.0.id}}">nota</a>{% endif %}
+								</div>
+								<div class="col col-3 pl-1 text-center">
+									<a href="{% url 'edit_measure' %}?measure_id={{m.id}}">
+										{{m.date_created|date:"d"}}
+									</a>
+								</div>	
+							</div>
+							
+								{% endfor %}
+						</div>
+<!-- END COLLAPSABLE LIST -->
+							{% endif %}
+
+						<div class="row no-gutters">
+							<div class="col col-3 text-center">
+								{% if cell.0.0.temperature %}
+								<span class="font-weight-bold">{{cell.0.0.temperature|stringformat:"04.1f"}}</span>ºC
+								{% else %}-{% endif %}
+							</div>
+							<div class="col col-3 pl-1 text-center">
+								{% if cell.0.0.chloride %}
+								<span class="nowrap"><span class="font-weight-bold">{{cell.0.0.chloride|stringformat:"03.1f"}}</span>
+								<span class="small">ppm</span></span>
+								{% else %}-{% endif %}
+							</div>
+							<div class="col col-3 pl-2 text-center">
+								{% if not cell.0.0.status_OK %}<span class="text-danger ml-2">**</span>{% endif %}
+								{% if cell.0.0.note %}<a class="ml-2" href="{% url 'measure_view' %}?measure_id={{cell.0.0.id}}">nota</a>{% endif %}
+							</div>
+							<div class="col col-3 pl-1 text-center">
+								<a href="{% url 'edit_measure' %}?measure_id={{cell.0.0.id}}">
+								{{cell.0.0.date_created|date:"d"}}
+								</a>
+							</div>	
+									
+						</div>
+							
+						{% endif %}						
+					</td>
+
+					<td>
+						<img class="expand_icon pointer" src="{% static 'control/expand_down.png' %}" style="height:1em; display:none;" id="{{j.id}}-{{t.id}}">
+						
+					</td>	
+		
+				</tr>
+				{% endif %}
+			{% endfor %}
+		{% endif %}
+	{% endfor %}
+	<tr><th colspan="8"></th></tr>
+	
+{% endfor %} <!-- area -->				
+		
+			</tbody> <!-- body -->
+		</table> <!-- table -->
+	</div>
+</div>
+	
+
+<!-- END TABLE -->
+
+<div class="row mb-5"><br></div>
+<div class="row mb-5"><br></div>
+
+{% endblock %}
+
+{% block js %}
+<script>
+$(document).ready(function(){
+
+	let expand;
+	$('.point_row').each(function(){
+
+		let point_row = $(this)
+		point_row.find('.quarter').each(function(){
+			expand = $(this).data('expand');
+			if (expand == "expand"){
+				console.log($(this).attr('id'), "expand");
+				point_row.find('.expand_icon').show();
+			};
+			expand = "";
+		})
+	});
+
+	$('.expand_icon').click(function(){
+		console.log("clicked");
+		// $(this).closest('.collapse').collapse('show');
+		let collapse_class=$(this).attr('id');
+		console.log(collapse_class);
+		$(".collapse"+"."+collapse_class).collapse('toggle');
+
+	});
+	
+	let cm_id = $('#current_month').data("cm");
+	var element = document.getElementById(cm_id);
+	let top_element = $('#top');
+	let top_position = top_element.offset().top;
+	var body = $("html, body");
+	body.stop().animate({ scrollTop: $(element).offset().top - top_position }, 600);
+	
+
+})
+
+
+</script>
+{% endblock %}	

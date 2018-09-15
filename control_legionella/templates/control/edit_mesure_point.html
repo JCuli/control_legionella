@@ -12,20 +12,20 @@
 <div class="row mb-5 mt-2">
 	<div class="col col-6">
 		<ul id="simpleList" class="list-group bg-light p-3" data-d = "{% url 'set_point_order' %}">
-{% for a in area_all %}
+{% for group in measure_point_group_all %}
 	{% if forloop.first %}
-			<li  class="d-none" data-id="area|{{a.id}}"></li>
-			<h4 class="mt-2"> {{a}}:</h4>
+			<li  class="d-none" data-id="group|{{group.id}}"></li>
+			<h4 class="mt-2"> {{group}}:</h4>
 	{% else %}
-			<li class="list-group-item border-0 mt-2 p-0" style="list-style: none; background: none;" data-id="area|{{a.id}}">
-				<h4> {{a}}:</h4>
+			<li class="list-group-item border-0 mt-2 p-0" style="list-style: none; background: none;" data-id="group|{{group.id}}">
+				<h4> {{group}}:</h4>
 			</li>
 	{% endif %}
 			
-	{% for j in a.measure_point_set.all %}
+	{% for j in group.measure_point_set.all %}
 					
 			<li class="list-group-item my-handle" data-id="point|{{j.id}}">
-				<span class="area"><span class="font-weight-bold">{{j.number}}</span>- {{j}}</span>
+				<span class="area"><span class="font-weight-bold">{{j.number}}</span>- {{j}}<br>{% if j.area %}{{j.area}}{% else %}<span class="text-danger">Sensa zona</span>{% endif %}</span>
 				<a href="{% url 'edit_point2' %}?point={{j.pk}}"> <span class="badge badge-warning badge-pill float-right ml-3 js-edit">editar</span>
 				</span> </a>
 			</li>
@@ -38,12 +38,12 @@
 	<div class="col col-6" style="position:fixed; right: 0;">
 		
 		<ul id="simpleList3" class="list-group bg-light p-3">
-			<li  class="d-none" data-id="area|None"></li>
-			<h4> Punts de mesura sensa zona asignada </h4>
+			<li  class="d-none" data-id="group|None"></li>
+			<h4> Punts de mesura sense asignar </h4>
 {% for j in measure_point_orphan %}
 
 		<li class="list-group-item my-handle" data-id="point|{{j.id}}">
-			<span class="area"><span class="font-weight-bold">{{j.number}}</span>- {{j}}</span>
+			<span class="area"><span class="font-weight-bold">{{j.number}}</span>- {{j}}<br>{% if j.area %}{{j.area}}{% else %}<span class="text-danger">Sensa zona</span>{% endif %}</span>
 			<a href="{% url 'edit_point2' %}?point={{j.pk}}"> <span class="badge badge-warning badge-pill float-right ml-3 js-edit">editar</span>
 			</span> </a>
 		</li>

@@ -21,7 +21,7 @@ Control Legionella|{% block title %}{% endblock %}
 
 
 <body>
-	<nav class="navbar sticky-top navbar-expand-md navbar-dark bg-dark mb-1">
+	<nav class="navbar sticky-top navbar-expand-md navbar-dark bg-dark mb-1" id="nav">
 	<div class="navbar-brand pb-0 pt-0">
 		<!-- <img src=" static 'RNAidatabase/RNAi.png' " width="58"> -->
 		<span class="h4">Control Legionella </span>
@@ -31,8 +31,10 @@ Control Legionella|{% block title %}{% endblock %}
 	</button>
 	<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
 	    <div class="navbar-nav">
-	    	<a class="nav-item nav-link"  href="{% url 'home' %}">Llista</a>
 	    	<a class="nav-item nav-link"  href="{% url 'select_point' %}">Mesurar</a>
+	    	<a class="nav-item nav-link"  href="{% url 'all_view' %}">Tots</a>
+	    	<a class="nav-item nav-link"  href="{% url 'month_view' %}">Per_mesos</a>
+	    	
 	    	<span class="nav-item dropdown">
 	    		<a class="nav-link dropdown-toggle mr-2" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Settings </a>
 	    		<div class="dropdown-menu topNavbar">

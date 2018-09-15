@@ -5,13 +5,18 @@
 {% block content %}
 
 
-
 <form method="GET" id="form">
 	<div class="row mt-5 align-content-center">
-		<div class="col col-12 col-md-6 offset-md-3">	
+		<div class="col col-12 col-md-6 offset-md-3">
+{% if measure_point.group.id != current_group %}
+			<div class="alert alert-danger" role="alert">
+				Encara no es necessari mesurar aquest punt!{% if measure_point.group %} Es de {{measure_point.group}} {% endif %}.
+			</div>
+{% endif %}
 			<div class="border p-3 clearfix mb-5 bg-light">
 				<h4 class="mt-2 ml-5 font-weight-bold">{{measure_point.number}} - {{ measure_point }}</h4>
 				<h5 class="ml-5">Zona: {{measure_point.area}}</h5>
+				<h5 class="ml-5">Mes: {{measure_point.group}}</h5>
 				<div class="ml-5 mt-5" >Selecciona fred o calent:</div>
 				<div >
 					
@@ -24,12 +29,6 @@
 						
 				</div>
 			</div>
-
-			<div class="row nmt-5">
-				<div class="col">
-					<button type="submit" name="next_point" class=" btn btn-secondary float-right">Saltar al proxim punt</button>
-				</div>
-			</div>	
 		</div>
 	</div>
 </form>

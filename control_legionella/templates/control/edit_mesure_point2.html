@@ -27,6 +27,12 @@
 			<label>{{form.area.label}}</label>
 			{{form.area}}
 		</div>
+
+		<div class="form-group">
+			<div> {{form.group.errors}} </div>
+			<label>{{form.group.label}}</label>
+			{{form.group}}
+		</div>
 		
 		<label >{{form.type_measure.label}}</label>
 		<div class="form-group">
@@ -44,7 +50,7 @@
 {% endfor %}
 
 		</div>
-		<button type="submit" class="btn btn-success  ml-5 float-right">Guardar</button>
+		<button type="submit" class="btn btn-success  ml-5 mb-5 float-right">Guardar</button>
 		<button type="button" name="delete"  data-toggle="modal" data-target="#warning_delete" class="btn btn-danger float-right">Eliminar</button>
 		<!-- Modal -->
 <div class="modal " id="warning_delete" tabindex="-1" role="dialog">
@@ -57,10 +63,10 @@
         </button>
       </div>
       <div class="modal-body">
-        <p>Hi ha {{form.instance.measure_set.all.count}} mesures asociades a "{{form.instance.name}}". Si el borres  tambe seran eliminades.
+        <p>Hi ha {{form.instance.measure_set.all.count}} mesures associades a "{{form.instance.name}}". Si el borres  també seran eliminades.
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tancar</button>
         <button type="submit" name="delete"   class="btn btn-danger float-right">Eliminar</button>	
       </div>
     </div>

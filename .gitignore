@@ -42,5 +42,6 @@ __pycache__/
 *.py[cod]
 
 local.py
+control_legionella/control/migrations/*
 
 

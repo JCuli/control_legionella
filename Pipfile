@@ -7,7 +7,7 @@ name = "pypi"
 Django = "==1.11.14"
 "psycopg2" = "*"
 whitenoise = "*"
-
+django-debug-toolbar = "*"
 
 [dev-packages]
 
