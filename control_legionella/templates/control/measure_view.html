@@ -8,15 +8,13 @@
 <div class="row mt-5">
 	<div class="col col-12 col-md-6 offset-md-3">
 		<div>
-			<h4>Notes:</h4>
+			<h4>Notes del punt {{instance.measure_point.number}}, {{instance.measure_point}}-{% if instance.type_measure.type_measure == "freda" %}<span class="text-primary">freda</span>.{% elif instance.type_measure.type_measure == "calenta" %}<span class="text-danger">calenta</span>. {%else%}{{instance.type_measure}}.{% endif %}</h4>
 			<div class="border p-3">	
 			{{ instance.note }}
 			</div>
 		</div>
 		
-
-		<div class="font-weight-bold mt-5">{{instance.measure_point.number}} - {{instance.measure_point}} {% if instance.type_measure.type_measure == "freda" %}<span class="text-primary">freda</span>.{% elif instance.type_measure.type_measure == "calenta" %}<span class="text-danger">calenta</span>. {%else%}{{instance.type_measure}}.{% endif %}</div>
-		<div >Zona: {{instance.measure_point.area}}</div>
+		<div class="mt-4" >Zona: {{instance.measure_point.area}}</div>
 		<div class="text-muted">({{ instance.date_created|date:"j M, Y" }} Hora: {{ instance.date_created|date:"H:i" }})</div>
 		<div>	
 			Temperatura: {% if instance.temperature %}{{ instance.temperature }}ºC{% else %}-{% endif %}

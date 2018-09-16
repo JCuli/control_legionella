@@ -23,8 +23,9 @@
 					<input name="measure_point" value="{{measure_point.number}}" class="d-none">
 						{{form.as_p}}
 						
-				{% for x,y in form.fields.type_measure.choices %}
-					<button type="button" class="btn {% if y == 'freda' %}btn-primary{% elif y == 'calenta' %}btn-danger{% else %}btn-secondary{% endif %} mt-3 ml-5 button_type" value="{{x}}">{{y}}</button>
+
+				{% for t in measure_point.type_measure.all %}
+					<button type="button" class="btn {% if t.type_measure == 'freda' %}btn-primary{% elif t.type_measure == 'calenta' %}btn-danger{% else %}btn-secondary{% endif %} mt-3 ml-5 button_type" value="{{t.id}}">{{t.type_measure}}</button>
 				{% endfor %}
 						
 				</div>

@@ -5,7 +5,7 @@
 {% block content %}
 
 <div class="row">
-	<div class="col col-12 col-md-8 col-lg-6">
+	<div class="col col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3">
 		{% if not suggested %}
 		<div class="alert alert-warning">Aquest mes ja s'han pres totes les mesures</div>
 		{%endif%}
@@ -14,28 +14,28 @@
 
 
 <div class="row mt-2 bg-light">
-	<div class="col col-12 col-md-8 col-lg-6">	
+	<div class="col col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3">	
 		<h4>Selecciona un punt de mesura pel seu número</h4>
 		
 			<form method='GET' action="{% url 'select_point' %}">
 
 			{{ form.as_p }}
 			
-			<button type="submit" class="btn btn-secondary mt-2 mb-3 float-right">Seleccionar</button>
+			<button type="submit" class="btn btn-secondary mt-2 mb-3 float-right">Mesurar</button>
 			</form>
 		
 	</div>
 </div>
 
 <div class="row mt-4">
-	<div class="col col-12 col-md-8 col-lg-6">
+	<div class="col col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3">
 		{% if suggested %}
 		<h4>Mesures que encara s'han de fer aquest mes</h4>
 		{%endif%}
 			<ul class="list-group">
 {% for item in suggested %}	
 				<li class="list-group-item bg-light">
-					<a href="{% url 'create_measure' %}?measure_point={{item.measure_point.number}}&type_measure={{item.type_measure.id}}" class="btn btn-secondary float-right">Seleccionar</a>
+					<a href="{% url 'create_measure' %}?measure_point={{item.measure_point.number}}&type_measure={{item.type_measure.id}}" class="btn btn-secondary float-right">Mesurar</a>
 					<span class="font-weight-bold">{{item.measure_point.number}}</span>- {{item.measure_point.name}} ({% if item.type_measure.type_measure == "freda" %}<span class="text-primary">freda</span>):{% elif item.type_measure.type_measure == "calenta" %}<span class="text-danger">calenta</span>): {%else%}{{item.type_measure.type_measure}}):{% endif %}<br>{{item.measure_point.area}}
 				</li>
 {% endfor %}	
@@ -45,7 +45,7 @@
 </div>
 
 <div class="row mt-5">
-	<div class="col col-12 col-md-8 col-lg-6 mb-5">
+	<div class="col col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3 mb-5">
 		<h4>Selecciona un punt de mesura de la llista</h4>
 		<div id="accordion">
 
@@ -67,7 +67,7 @@
 							<div class="border-bottom pl-3 pr-3">
 								<div class="mt-1 mb-1 clearfix">
 									<span class="font-weight-bold">{{point.number}}</span>- {{point}}</span>
-									<a href=" {% url 'create_measure' %}?measure_point={{point.number}}" class="btn btn-sm btn-secondary  float-right"> seleccionar</a>
+									<a href=" {% url 'create_measure' %}?measure_point={{point.number}}" class="btn btn-sm btn-secondary  float-right"> mesurar</a>
 								</div>
 							</div>
 						

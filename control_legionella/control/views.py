@@ -271,7 +271,7 @@ def set_area_order_view(request,*args, **kwargs):
 def edit_measure_point_view(request,*args,**kwargs):
 
 	measure_point_group_all = Measure_point_group.objects.all()
-	measure_point_orphan 	= Measure_point.objects.filter(group__isnull=True)
+	measure_point_orphan 	= Measure_point.objects.filter(group__isnull=True).order_by('number')
 	measure_point_all 	 	= Measure_point.objects.all()
 	
 	context 	= { 'measure_point_group_all':measure_point_group_all,
@@ -341,3 +341,12 @@ def set_point_order_view(request,*args, **kwargs):
 							point_measure_instance.save()
 		
 	return JsonResponse({'data':'OK','error':error})
+
+@login_required()
+def edit_measure_point_byNumber_view(request,*args,**kwargs):
+
+	measure_point_all 	 	= Measure_point.objects.all().order_by('number')
+	
+	context 	= { 'measure_point_all':measure_point_all,	
+			}
+	return render(request, 'control/edit_mesure_point_byNumber.html', context)
