@@ -17,7 +17,7 @@
 						<span class="font-weight-bold">{{mp.number}}</span>- {{mp}}<br>
 						{% if mp.area %}{{mp.area}}{% else %}<span class="text-danger">Sensa zona</span>{% endif %}<br>
 						{% if mp.group %}{{mp.group}}{% else %}<span class="text-danger">Sensa mes asignat</span>{% endif %}
-						<a href="{% url 'edit_point2' %}?point={{mp.pk}}"> <span class="badge badge-warning badge-pill float-right ml-3">editar</span></a>
+						<a href="{% url 'edit_point2' %}?point={{mp.pk}}&byNumber="> <span class="badge badge-warning badge-pill float-right ml-3">editar</span></a>
 					</li>
 
 {% endfor %}

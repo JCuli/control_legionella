@@ -4,15 +4,23 @@
 
 {% block content %}
 
-
-<div class="row mt-2">
-	<div class="col">
+<div class="row">
+	<div class="col col-12">
 		<h4 class="text-center">Editar els punts de mesura i el seu ordre</h4>
-		<a href="{%url 'edit_measure_point_byNumber' %}" class="d-block text-right">(Llistat alternatiu ordenat per número.)</a>
+	</div>
+</div>
+<div class="row">
+	<div class="col col-12">
+		<a href="{%url 'edit_measure_point_byNumber' %}" class="float-right">(Llistat alternatiu ordenat per número)</a>
+	</div>
+</div>
 
 <div class="row mb-5 mt-2">
-	<div class="col col-6">
-		<ul id="simpleList" class="list-group bg-light" data-d = "{% url 'set_point_order' %}">
+	<div class="col col-6 col_scrollable">
+		
+
+
+		<ul id="simpleList" class="list-group pr-2 pl-2 pb-2 scrollable" data-d = "{% url 'set_point_order' %}">
 {% for group in measure_point_group_all %}
 	{% if forloop.first %}
 			<li  class="d-none" data-id="group|{{group.id}}"></li>
@@ -36,11 +44,11 @@
 
 		</ul>
 	</div>
-	<div class="col col-6" style="position:fixed; right: 0;">
+	<div class="col col-6 " >
 		
-		<ul id="simpleList3" class="list-group bg-light p-3">
+		<ul id="simpleList3" class="list-group pb-2 pr-2 pl-2 pb-2 ">
 			<li  class="d-none" data-id="group|None"></li>
-			<h4> Punts de mesura sense asignar </h4>
+			<h4 class="text-center mt-2"> Punts de mesura sense asignar </h4>
 {% for j in measure_point_orphan %}
 
 		<li class="list-group-item my-handle  pt-1 pb-1" data-id="point|{{j.id}}">
@@ -103,7 +111,13 @@
             },
         });
 
-	}
+	};
+
+	// $(window).on('resize scroll', function() {
+	// 	let top= $('#nav').offset().top + $('#nav').height() + 10;
+	// 	// console.log(top)
+	// 	$('#simpleList3').offset({ top: top });
+	// });
 
 	
 </script>

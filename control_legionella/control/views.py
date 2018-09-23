@@ -288,20 +288,25 @@ def edit_measure_point_view(request,*args,**kwargs):
 def edit_measure_point2_view(request, *args, **kwargs):
 	point_id 			= request.GET.get('point')
 	point_instance 		= Measure_point.objects.filter(id=point_id)
+	if "byNumber" in request.GET:
+		url_redirect 	= 'edit_measure_point_byNumber'
+	else:
+		url_redirect 	= 'edit_point'
+
 	if point_instance:
 		point_instance 	= Measure_point.objects.get(id=point_id)
 	else:
-		return redirect('edit_point')
+		return redirect(url_redirect)
 
 	form 				= Create_measure_point_form(request.POST or None, instance=point_instance )
 	if form.is_valid():
 		if "delete" in request.POST:
 			form.instance.delete()
-			return redirect('edit_point')
+			return redirect(url_redirect)
 		else:
 			form.save()
 			
-			return redirect('edit_point')
+			return redirect(url_redirect)
 	else:
 		context 			= {
 								'form':form

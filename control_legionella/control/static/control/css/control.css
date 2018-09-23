@@ -34,3 +34,20 @@
 	cursor: pointer;
 	
 }
+
+
+/*.fixed-wrapper {
+	position:absolute;
+
+}*/
+.fixed-content {
+	top:100;
+	right:0;
+    bottom:0;
+	position:fixed;
+    overflow-y:scroll;
+    width: 50%
+	
+
+}
+
