@@ -8,11 +8,14 @@
 
 
 <span id="current_month" data-cm="{{current_month}}">
-<div class="row ">
-	<div class="col text-center">
-		<h4 id="top">ANY {{year}}</h4>
+
+<form id="form_year" method="GET">
+	<div class="row mt-1 mb-1">
+		<div id="top" class="col text-center">
+			<span  class="font-weight-bold">ANY: </span>{{form.year}}
+		</div>
 	</div>
-</div>
+</form>
 
 <!-- TABLE -->
 <div class="row " id="parentScrollingContainer">	
@@ -23,9 +26,9 @@
 					<th class="border-0" width="5%"></th>
 					<th class="border-0" width="39%"></th>
 					<th class="border-0" width="12%"></th>
-					<th class="border-0" width="15%"></th>
-					<th class="border-0" width="11%"></th>
-					<th class="border-0" width="14%"></th>
+					<th class="border-0" width="12%"></th>
+					<th class="border-0" width="12%"></th>
+					<th class="border-0" width="12%"></th>
 					<th class="border-0" width="4%"></th>
 				</tr>
 			</thead>
@@ -77,17 +80,24 @@
 									<span class="font-weight-bold">{{m.temperature|stringformat:"04.1f"}}</span>ºC
 									{% else %}-{% endif %}
 								</div>
-								<div class="col col-3 pl-1 text-center">
+								<div class="col col-3 text-center">
 									{% if m.chloride %}
 									<span class="nowrap"><span class="font-weight-bold">{{m.chloride|stringformat:"03.1f"}}</span>
 									<span class="small">ppm</span></span>
 									{% else %}-{% endif %}
 								</div>
-								<div class="col col-3 pl-2 text-center">
-									{% if not m.status_OK %}<span class="text-danger ml-2">**</span>{% endif %}
-									{% if m.note %}<a class="ml-2" href="{% url 'edit_measure' %}?measure_id={{cell.0.0.id}}">nota</a>{% endif %}
+								<div class="col col-3 ">
+									<div class="row no-gutters">
+										<div class="col col-4 text-right">
+											{% if not m.status_OK %}<span class="text-danger ml-2">**</span>{% endif %}
+										</div>
+										<div class="col col-8 text-left">
+											{% if m.note %}<a class="ml-2" href="{% url 'measure_view' %}?measure_id={{m.id}}">nota</a>{% endif %}
+										</div>
+									</div>
 								</div>
-								<div class="col col-3 pl-1 text-center">
+			
+								<div class="col col-3 text-center">
 									<a href="{% url 'edit_measure' %}?measure_id={{m.id}}">
 										{{m.date_created|date:"d"}}
 									</a>
@@ -105,17 +115,23 @@
 								<span class="font-weight-bold">{{cell.0.0.temperature|stringformat:"04.1f"}}</span>ºC
 								{% else %}-{% endif %}
 							</div>
-							<div class="col col-3 pl-1 text-center">
+							<div class="col col-3 text-center">
 								{% if cell.0.0.chloride %}
 								<span class="nowrap"><span class="font-weight-bold">{{cell.0.0.chloride|stringformat:"03.1f"}}</span>
 								<span class="small">ppm</span></span>
 								{% else %}-{% endif %}
 							</div>
-							<div class="col col-3 pl-2 text-center">
-								{% if not cell.0.0.status_OK %}<span class="text-danger ml-2">**</span>{% endif %}
-								{% if cell.0.0.note %}<a class="ml-2" href="{% url 'measure_view' %}?measure_id={{cell.0.0.id}}">nota</a>{% endif %}
+							<div class="col col-3">
+								<div class="row no-gutters">
+									<div class="col col-4 text-right">
+										{% if not cell.0.0.status_OK %}<span class="text-danger ml-2">**</span>{% endif %}
+									</div>
+									<div class="col col-8 text-left">
+										{% if cell.0.0.note %}<a class="ml-2" href="{% url 'measure_view' %}?measure_id={{cell.0.0.id}}">nota</a>{% endif %}
+									</div>
+								</div>								
 							</div>
-							<div class="col col-3 pl-1 text-center">
+							<div class="col col-3 text-center">
 								<a href="{% url 'edit_measure' %}?measure_id={{cell.0.0.id}}">
 								{{cell.0.0.date_created|date:"d"}}
 								</a>
@@ -157,7 +173,12 @@
 <script>
 $(document).ready(function(){
 
-	let expand;
+	let expand, element;
+
+	$('#id_year').change(function(){
+		$('#form_year').submit();
+	})
+
 	$('.point_row').each(function(){
 
 		let point_row = $(this)
@@ -181,13 +202,14 @@ $(document).ready(function(){
 	});
 	
 	let cm_id = $('#current_month').data("cm");
-	var element = document.getElementById(cm_id);
-	let top_element = $('#top');
-	let top_position = top_element.offset().top;
-	var body = $("html, body");
-	body.stop().animate({ scrollTop: $(element).offset().top - top_position }, 600);
+	if(cm_id!=13){
+		element = document.getElementById(cm_id);
+		let top_element = $('#top');
+		let top_position = top_element.offset().top;
+		var body = $("html, body");
+		body.stop().animate({ scrollTop: $(element).offset().top - top_position }, 600);
+	} 
 	
-
 })
 
 

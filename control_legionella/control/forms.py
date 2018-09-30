@@ -195,3 +195,20 @@ class Delete_area_form(forms.ModelForm):
 		fields	= [
 			
 		]
+
+class Select_year_form(forms.Form):
+
+	YEARS = (
+		('2018', '2018'),
+		('2019', '2019'),
+		('2020', '2020'),
+		('2021', '2021'),
+		('2022', '2022'),
+	)
+
+	year = forms.ChoiceField(
+						choices= YEARS,
+						widget = forms.Select(attrs={
+								'class':"",
+							})
+						)

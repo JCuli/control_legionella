@@ -12,18 +12,21 @@ from .forms import *
 @login_required()
 def list_view(request):
 	year 					= datetime.now().year
+	year 					= request.GET.get('year',year)
 	measure_query 			= Measure.objects.filter(date_created__year=year)
 	measure_query 			= measure_query.values('id','note', 'measure_point_id', 'type_measure_id', 'month','temperature','chloride', 'date_created','status_OK')
 	measure_point_query 	= Measure_point.objects.all().order_by('name').prefetch_related('area', 'type_measure')
 	area_all 				= Measure_point.objects.all().values_list('area', flat=True)
 	area_all 				= Area.objects.filter(id__in=area_all)
+	form 					= Select_year_form(initial={'year':year})
 	context 				= {	'measure_query':measure_query,
 								'measure_point_query':measure_point_query,
 								'range': range(1,13),
 								'year':year,
 								'area_all':area_all,
 								'type_measure_all':Type_measure.objects.all(),
-								'group_all': Measure_point_group.objects.all()
+								'group_all': Measure_point_group.objects.all(),
+								'form':form
 							}
 	return render(request, 'control/list.html', context)
 
@@ -31,11 +34,13 @@ def list_view(request):
 @login_required()
 def month_view(request):
 	year 					= datetime.now().year
+	year 					= int(request.GET.get('year',year))
 	measure_query 			= Measure.objects.filter(date_created__year=year)
 	measure_query 			= measure_query.values('id','note','measure_point_id', 'type_measure_id', 'month','temperature','chloride', 'date_created','status_OK')
 	measure_point_query 	= Measure_point.objects.all().prefetch_related('area', 'type_measure')
 	area_all 				= Measure_point.objects.all().values_list('area', flat=True)
 	area_all 				= Area.objects.filter(id__in=area_all)
+	form 					= Select_year_form(initial={'year':year})
 
 	month 					= datetime.now().month
 	if year == datetime.now().year:
@@ -51,7 +56,8 @@ def month_view(request):
 								'area_all':area_all,
 								'type_measure_all':Type_measure.objects.all(),
 								'group_all': Measure_point_group.objects.all(),
-								'current_month': current_month
+								'current_month': current_month,
+								'form':form
 							}
 	return render(request, 'control/list_month.html', context)
 

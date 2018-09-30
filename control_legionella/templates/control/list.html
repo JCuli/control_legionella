@@ -8,11 +8,14 @@
 
 
 <span id="edit_measure_url" data-edit_measure_url="{% url 'edit_measure' %}"></span>
-<div class="row ">
-	<div class="col text-center">
-		<h4>ANY {{year}}</h4>
+
+<form id="form_year" method="GET">
+	<div class="row mt-1 mb-1">
+		<div class="col text-center">
+			<span class="font-weight-bold">ANY: </span>{{form.year}}
+		</div>
 	</div>
-</div>
+</form>
 
 <!-- TABLE -->
 <div class="row ">	
@@ -184,6 +187,10 @@
 
 {% block js %}
 <script>
-
+$(document).ready(function(){
+	$('#id_year').change(function(){
+		$('#form_year').submit();
+	})
+})
 </script>
 {% endblock %}	
