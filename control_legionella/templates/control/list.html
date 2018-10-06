@@ -44,7 +44,7 @@
 					<th class="border-top-0 table_head">Data</th>
 					<th class="border-top-0 table_head">Temp.</th>
 					<th class="border-top-0 table_head">Clor</th>
-					<th class="border-top-0 table_head" colspan="2">Notes</th>
+					<th class="border-top-0 table_head" colspan="2">Estat</th>
 					
 					
 				</tr>
@@ -84,7 +84,7 @@
 										 {% else %}-{% endif %}
 									</td>
 									<td class=" border-0" width="10%">
-										{% if not m.status_OK %}<span class="text-danger">***</span>{% endif %}
+										{% if not m.status_OK %}<span class="text-danger">∗∗</span>{% endif %}
 									</td>
 									<td class=" border-0" width="14%">
 										{% if m.note %}<a href="{% url 'measure_view' %}?measure_id={{m.id}}">nota</a>{% endif %}
@@ -113,7 +113,7 @@
 					<th class="border-top-0 table_head">Data</th>
 					<th class="border-top-0 table_head">Temp.</th>
 					<th class="border-top-0 table_head">Clor</th>
-					<th class="border-top-0 table_head" colspan="2">Notes</th>
+					<th class="border-top-0 table_head" colspan="2">Estat</th>
 					
 					
 				</tr>
@@ -153,7 +153,7 @@
 										 {% else %}-{% endif %}
 									</td>
 									<td class=" border-0" width="10%">
-										{% if not m.status_OK %}<span class="text-danger">***</span>{% endif %}
+										{% if not m.status_OK %}<span class="text-danger">∗∗</span>{% endif %}
 									</td>
 									<td class=" border-0" width="14%">
 										{% if m.note %}<a href="{% url 'measure_view' %}?measure_id={{m.id}}">nota</a>{% endif %}

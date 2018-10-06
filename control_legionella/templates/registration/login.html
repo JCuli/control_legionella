@@ -40,10 +40,12 @@ login
 
 {% if next %}
     {% if user.is_authenticated %}
-    <p class="mt-5">El teu compte no te drets per accedir a aquesta pagina. Si vols continuar, cambia a un usuari amb privilegis de acces.</p>
+    <p class="mt-5">El teu compte no te drets per accedir a aquesta pagina. Si vols continuar, cambia a un usuari amb privilegis de acces.</p> 
     {% else %}
-        <p class="mt-5">Si us plau, login.</p>  
+    <p class="mt-5">Si us plau, login.</p>    
     {% endif %}
+{% else %}
+    <p class="mt-5">Si us plau, login.</p> 
 {% endif %}
 
 {% if form.errors %}

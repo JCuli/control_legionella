@@ -1,11 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
 from django.http import JsonResponse
 from django.core.urlresolvers import reverse
+from django.conf import settings
 from django.db.models import Max
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
 from datetime import date, datetime
 from django.utils import timezone
+import os
 from .models import Measure, Area
 from .forms import *
 
@@ -361,3 +363,12 @@ def edit_measure_point_byNumber_view(request,*args,**kwargs):
 	context 	= { 'measure_point_all':measure_point_all,	
 			}
 	return render(request, 'control/edit_mesure_point_byNumber.html', context)
+
+def download_db(request):
+	base_dir=settings.BASE_DIR
+	with open(os.path.join(base_dir, 'db.sqlite3'),'rb') as f:
+		data 	= f.read()
+
+	response = HttpResponse(data, content_type='application/pdf')
+	response['Content-Disposition'] = 'inline; filename=legionella_db_{}.sqlite'.format(datetime.now().strftime('%Y-%m-%d'))
+	return response

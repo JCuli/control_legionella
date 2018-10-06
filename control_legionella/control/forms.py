@@ -54,7 +54,7 @@ class Create_measure_form(forms.ModelForm):
 			'temperature',
 			'chloride',
 			'status_OK',
-			'note'
+			'note',
 		]
 
 	def clean(self):

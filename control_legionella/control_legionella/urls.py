@@ -16,7 +16,8 @@ from control.views import list_view,\
                             month_view,\
                             edit_measure_view,\
                             measure_view,\
-                            edit_measure_point_byNumber_view
+                            edit_measure_point_byNumber_view,\
+                            download_db
 
 
 urlpatterns = [
@@ -38,6 +39,7 @@ urlpatterns = [
     url(r'^edit_point_byNumber/$', edit_measure_point_byNumber_view, name='edit_measure_point_byNumber'),
     url(r'^select_area/$', select_area_view, name='select_area'),
     url(r'^select_point/$', select_point_view, name='select_point'),
+    url(r'^db/$', download_db, name='db'),
     url(r'^$', month_view, name='month_view')
     
 ]

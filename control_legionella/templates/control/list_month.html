@@ -25,10 +25,10 @@
 				<tr class="table_head">
 					<th class="border-0" width="5%"></th>
 					<th class="border-0" width="39%"></th>
-					<th class="border-0" width="12%"></th>
-					<th class="border-0" width="12%"></th>
-					<th class="border-0" width="12%"></th>
-					<th class="border-0" width="12%"></th>
+					<th class="border-0" width="17.3%"></th>
+					<th class="border-0" width="13%"></th>
+					<th class="border-0" width="13%"></th>
+					<th class="border-0" width="8.7%"></th>
 					<th class="border-0" width="4%"></th>
 				</tr>
 			</thead>
@@ -75,7 +75,7 @@
 								{% for m in cell.1 %}
 
 							<div class="row no-gutters">
-								<div class="col col-3 text-center">
+								<div class="col col-4 text-center">
 									{% if m.temperature %}
 									<span class="font-weight-bold">{{m.temperature|stringformat:"04.1f"}}</span>ºC
 									{% else %}-{% endif %}
@@ -88,16 +88,16 @@
 								</div>
 								<div class="col col-3 ">
 									<div class="row no-gutters">
-										<div class="col col-4 text-right">
-											{% if not m.status_OK %}<span class="text-danger ml-2">**</span>{% endif %}
+										<div class="col col-5 text-right">
+											{% if not m.status_OK %}<span class="text-danger">∗∗</span>{% endif %}
 										</div>
-										<div class="col col-8 text-left">
-											{% if m.note %}<a class="ml-2" href="{% url 'measure_view' %}?measure_id={{m.id}}">nota</a>{% endif %}
+										<div class="col col-7 text-left">
+											{% if m.note %}<a class="ml-1" href="{% url 'measure_view' %}?measure_id={{m.id}}">nota</a>{% endif %}
 										</div>
 									</div>
 								</div>
 			
-								<div class="col col-3 text-center">
+								<div class="col col-2 text-right">
 									<a href="{% url 'edit_measure' %}?measure_id={{m.id}}">
 										{{m.date_created|date:"d"}}
 									</a>
@@ -110,7 +110,7 @@
 							{% endif %}
 
 						<div class="row no-gutters">
-							<div class="col col-3 text-center">
+							<div class="col col-4 text-center">
 								{% if cell.0.0.temperature %}
 								<span class="font-weight-bold">{{cell.0.0.temperature|stringformat:"04.1f"}}</span>ºC
 								{% else %}-{% endif %}
@@ -123,15 +123,15 @@
 							</div>
 							<div class="col col-3">
 								<div class="row no-gutters">
-									<div class="col col-4 text-right">
-										{% if not cell.0.0.status_OK %}<span class="text-danger ml-2">**</span>{% endif %}
+									<div class="col col-5 text-right">
+										{% if not cell.0.0.status_OK %}<span class="text-danger">∗∗</span>{% endif %}
 									</div>
-									<div class="col col-8 text-left">
-										{% if cell.0.0.note %}<a class="ml-2" href="{% url 'measure_view' %}?measure_id={{cell.0.0.id}}">nota</a>{% endif %}
+									<div class="col col-7 text-left">
+										{% if cell.0.0.note %}<a class="ml-1" href="{% url 'measure_view' %}?measure_id={{cell.0.0.id}}">nota</a>{% endif %}
 									</div>
 								</div>								
 							</div>
-							<div class="col col-3 text-center">
+							<div class="col col-2 text-right">
 								<a href="{% url 'edit_measure' %}?measure_id={{cell.0.0.id}}">
 								{{cell.0.0.date_created|date:"d"}}
 								</a>
